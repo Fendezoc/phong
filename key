@@ -18,8 +18,8 @@ local KEYS_LIST = {
 
 -- 2. DANH SÁCH 50 LINK GET KEY TƯƠNG ỨNG (Thay link của bạn vào đây)
 local LINKS_LIST = {
-    "https://link4m.net/9YQpN", "https://link4m.net/link2", "https://link4m.net/link3", "https://link4m.net/link4", "https://link4m.net/link5",
-    "https://link4m.net/link6", "https://link4m.net/link7", "https://link4m.net/link8", "https://link4m.net/link9", "https://link4m.net/link10",
+    "https://lootdest.org/s?dU7HBL1V", "https://lootdest.org/s?KiQ3Ho16", "https://lootdest.org/s?M3DfTjhW", "https://loot-link.com/s?L0wt3brm", "https://lootdest.org/s?sj4Qe4Es",
+    "https://loot-link.com/s?XVEi4RqL", "https://loot-link.com/s?XVEi4RqL", "https://loot-link.com/s?bLPdOIBn", "https://lootdest.org/s?HdM3oF0z", "https://link4m.net/link10",
     "https://link4m.net/link11", "https://link4m.net/link12", "https://link4m.net/link13", "https://link4m.net/link14", "https://link4m.net/link15",
     "https://link4m.net/link16", "https://link4m.net/link17", "https://link4m.net/link18", "https://link4m.net/link19", "https://link4m.net/link20",
     "https://link4m.net/link21", "https://link4m.net/link22", "https://link4m.net/link23", "https://link4m.net/link24", "https://link4m.net/link25",
