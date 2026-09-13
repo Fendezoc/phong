@@ -1,0 +1,240 @@
+--[[ 
+    BOMB HUB KEY SYSTEM (50 LINKS & 50 KEYS SYSTEM)
+]]
+
+-- 1. DANH SÁCH 50 KEY CỐ ĐỊNH
+local KEYS_LIST = {
+    "bomb_key_2839", "bomb_key_9281", "bomb_key_7712", "bomb_key_3341", "bomb_key_8829",
+    "bomb_key_1029", "bomb_key_5521", "bomb_key_9910", "bomb_key_2048", "bomb_key_6631",
+    "bomb_key_4412", "bomb_key_8123", "bomb_key_7719", "bomb_key_1102", "bomb_key_3920",
+    "bomb_key_5812", "bomb_key_2910", "bomb_key_4819", "bomb_key_9021", "bomb_key_6712",
+    "bomb_key_3102", "bomb_key_8812", "bomb_key_5519", "bomb_key_2201", "bomb_key_7412",
+    "bomb_key_9182", "bomb_key_6391", "bomb_key_1049", "bomb_key_8301", "bomb_key_4721",
+    "bomb_key_2940", "bomb_key_8192", "bomb_key_3710", "bomb_key_6621", "bomb_key_5019",
+    "bomb_key_9201", "bomb_key_1829", "bomb_key_4021", "bomb_key_7392", "bomb_key_3819",
+    "bomb_key_6102", "bomb_key_2849", "bomb_key_8591", "bomb_key_1920", "bomb_key_5731",
+    "bomb_key_4920", "bomb_key_8391", "bomb_key_2019", "bomb_key_7582", "bomb_key_3910"
+}
+
+-- 2. DANH SÁCH 50 LINK GET KEY TƯƠNG ỨNG (Thay link của bạn vào đây)
+local LINKS_LIST = {
+    "https://link4m.net/9YQpN", "https://link4m.net/link2", "https://link4m.net/link3", "https://link4m.net/link4", "https://link4m.net/link5",
+    "https://link4m.net/link6", "https://link4m.net/link7", "https://link4m.net/link8", "https://link4m.net/link9", "https://link4m.net/link10",
+    "https://link4m.net/link11", "https://link4m.net/link12", "https://link4m.net/link13", "https://link4m.net/link14", "https://link4m.net/link15",
+    "https://link4m.net/link16", "https://link4m.net/link17", "https://link4m.net/link18", "https://link4m.net/link19", "https://link4m.net/link20",
+    "https://link4m.net/link21", "https://link4m.net/link22", "https://link4m.net/link23", "https://link4m.net/link24", "https://link4m.net/link25",
+    "https://link4m.net/link26", "https://link4m.net/link27", "https://link4m.net/link28", "https://link4m.net/link29", "https://link4m.net/link30",
+    "https://link4m.net/link31", "https://link4m.net/link32", "https://link4m.net/link33", "https://link4m.net/link34", "https://link4m.net/link35",
+    "https://link4m.net/link36", "https://link4m.net/link37", "https://link4m.net/link38", "https://link4m.net/link39", "https://link4m.net/link40",
+    "https://link4m.net/link41", "https://link4m.net/link42", "https://link4m.net/link43", "https://link4m.net/link44", "https://link4m.net/link45",
+    "https://link4m.net/link46", "https://link4m.net/link47", "https://link4m.net/link48", "https://link4m.net/link49", "https://link4m.net/link50"
+}
+
+-- Hàm tính toán Index duy nhất theo UserId và Ngày
+local function GetDailyIndex()
+    local player = game:GetService("Players").LocalPlayer
+    local userId = player and player.UserId or 0
+    local dateStr = os.date("!%Y-%m-%d") -- UTC Date
+    
+    local combinedStr = tostring(userId) .. "_" .. dateStr
+    local hash = 0
+    for i = 1, #combinedStr do
+        local charCode = string.byte(combinedStr, i)
+        hash = (hash * 31 + charCode) % 2147483647
+    end
+    
+    return (hash % #KEYS_LIST) + 1
+end
+
+-- Lấy Key và Link tương ứng trong ngày
+local function GetDailyData()
+    local index = GetDailyIndex()
+    return KEYS_LIST[index], LINKS_LIST[index]
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local UIStroke = Instance.new("UIStroke")
+local UIGradient = Instance.new("UIGradient")
+local Title = Instance.new("TextLabel")
+local KeyInput = Instance.new("TextBox")
+local CopyBtn = Instance.new("TextButton")
+local SubmitBtn = Instance.new("TextButton")
+
+-- Cấu hình ScreenGui
+ScreenGui.Parent = game.CoreGui
+ScreenGui.Name = "BombHub_System"
+
+-- Hàm tạo THÔNG BÁO CHỮ ĐỎ NHẸ RÕ NÉT
+local function NotifyRed(text)
+    local NotifyGui = Instance.new("ScreenGui")
+    NotifyGui.Parent = game.CoreGui
+    
+    local Label = Instance.new("TextLabel")
+    Label.Parent = NotifyGui
+    Label.Size = UDim2.new(0, 500, 0, 50)
+    Label.Position = UDim2.new(0.5, -250, 0.25, 0)
+    Label.BackgroundTransparency = 1
+    Label.TextColor3 = Color3.fromRGB(255, 120, 120)
+    Label.Text = text
+    Label.Font = Enum.Font.GothamBold
+    Label.TextSize = 22
+    Label.TextStrokeTransparency = 0.3 
+    Label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
+    
+    task.spawn(function()
+        task.wait(3.5)
+        for i = 0, 1, 0.1 do
+            Label.TextTransparency = i
+            Label.TextStrokeTransparency = 0.3 + (i * 0.7)
+            task.wait(0.05)
+        end
+        NotifyGui:Destroy()
+    end)
+end
+
+-- Khung Menu Chính
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 10)
+MainFrame.Position = UDim2.new(0.5, -140, 0.5, -100)
+MainFrame.Size = UDim2.new(0, 280, 0, 200)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+UICorner.CornerRadius = UDim.new(0, 15)
+UICorner.Parent = MainFrame
+
+-- Viền phát sáng
+UIStroke.Parent = MainFrame
+UIStroke.Thickness = 3
+UIStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+UIStroke.Color = Color3.fromRGB(255, 255, 255)
+
+UIGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 0)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 0, 0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 0))
+}
+UIGradient.Parent = UIStroke
+
+-- Tiêu đề
+Title.Parent = MainFrame
+Title.Text = "BOMB HUB"
+Title.Font = Enum.Font.GothamBold
+Title.TextColor3 = Color3.fromRGB(255, 255, 0)
+Title.TextSize = 22
+Title.Size = UDim2.new(1, 0, 0, 50)
+Title.BackgroundTransparency = 1
+
+-- Ô nhập Key
+KeyInput.Parent = MainFrame
+KeyInput.PlaceholderText = "Nhập Key tại đây..."
+KeyInput.Text = ""
+KeyInput.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+KeyInput.Position = UDim2.new(0.1, 0, 0.35, 0)
+KeyInput.Size = UDim2.new(0.8, 0, 0, 35)
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.Font = Enum.Font.GothamSemibold
+Instance.new("UICorner", KeyInput).CornerRadius = UDim.new(0, 8)
+
+-- Nút Sao chép Link
+CopyBtn.Parent = MainFrame
+CopyBtn.Text = "SAO CHÉP LINK GET KEY"
+CopyBtn.Font = Enum.Font.GothamBold
+CopyBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
+CopyBtn.TextColor3 = Color3.fromRGB(255, 120, 120)
+CopyBtn.Position = UDim2.new(0.1, 0, 0.58, 5)
+CopyBtn.Size = UDim2.new(0.8, 0, 0, 25)
+Instance.new("UICorner", CopyBtn).CornerRadius = UDim.new(0, 5)
+
+-- Nút Kích hoạt Script
+SubmitBtn.Parent = MainFrame
+SubmitBtn.Text = "KÍCH HOẠT SCRIPT"
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+SubmitBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+SubmitBtn.Position = UDim2.new(0.1, 0, 0.78, 10)
+SubmitBtn.Size = UDim2.new(0.8, 0, 0, 35)
+Instance.new("UICorner", SubmitBtn).CornerRadius = UDim.new(0, 10)
+
+--- XỬ LÝ LƯU KEY & SỰ KIỆN ---
+
+local KEY_FILE_PATH = "BombHub_Key.txt"
+
+local function SaveKey(key)
+    pcall(function()
+        if writefile then writefile(KEY_FILE_PATH, key) end
+    end)
+end
+
+local function LoadSavedKey()
+    local savedKey = ""
+    pcall(function()
+        if isfile and isfile(KEY_FILE_PATH) and readfile then
+            savedKey = readfile(KEY_FILE_PATH)
+        end
+    end)
+    return savedKey
+end
+
+-- 1. Sao chép đúng Link tương ứng với Key của User hôm nay
+CopyBtn.MouseButton1Click:Connect(function()
+    local _, correctLink = GetDailyData()
+    setclipboard(correctLink)
+    CopyBtn.Text = "ĐÃ SAO CHÉP!"
+    
+    NotifyRed("Dán lên trình duyệt để getkey")
+    
+    task.wait(2)
+    CopyBtn.Text = "SAO CHÉP LINK GET KEY"
+end)
+
+-- 2. Hàm kiểm tra và kích hoạt
+local function VerifyAndExecute(userKey)
+    local correctKey, _ = GetDailyData()
+    
+    if userKey == correctKey then
+        SaveKey(userKey)
+        
+        SubmitBtn.Text = "XÁC MINH THÀNH CÔNG!"
+        SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+        SubmitBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+        task.wait(1)
+        ScreenGui:Destroy()
+        
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/longhihilonghihi-hub/BombHub/refs/heads/main/CombackVersion"))()
+        return true
+    else
+        SubmitBtn.Text = "SAI KEY! KIỂM TRA LẠI"
+        SubmitBtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+        SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        task.wait(2)
+        SubmitBtn.Text = "KÍCH HOẠT SCRIPT"
+        SubmitBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+        SubmitBtn.TextColor3 = Color3.fromRGB(0, 0, 0)
+        return false
+    end
+end
+
+SubmitBtn.MouseButton1Click:Connect(function()
+    VerifyAndExecute(KeyInput.Text)
+end)
+
+-- 3. Tự động kiểm tra Key khi mở Game
+task.spawn(function()
+    local savedKey = LoadSavedKey()
+    if savedKey and savedKey ~= "" then
+        KeyInput.Text = savedKey
+        SubmitBtn.Text = "ĐANG TỰ ĐỘNG KÍCH HOẠT..."
+        task.wait(0.5)
+        
+        local success = VerifyAndExecute(savedKey)
+        if not success then
+            pcall(function()
+                if delfile then delfile(KEY_FILE_PATH) end
+            end)
+        end
+    end
+end)
